@@ -99,6 +99,14 @@ Token *Token_new_comma(int line) {
   return Token_new(COMMA, ",", NULL, line);
 }
 
+Token *Token_new_plus(int line) {
+  return Token_new(PLUS, "+", NULL, line);
+}
+
+Token *Token_new_minus(int line) {
+  return Token_new(MINUS, "-", NULL, line);
+}
+
 void scanner_init(Scanner *scanner, const char *source) {
   scanner->source = source;
   scanner->start = scanner->current = 0;
@@ -195,6 +203,8 @@ void scanner_scan_token(Scanner *scanner) {
     case '*': scanner_add_token(scanner, Token_new_star(scanner->line)); break;
     case '.': scanner_add_token(scanner, Token_new_dot(scanner->line)); break;
     case ',': scanner_add_token(scanner, Token_new_comma(scanner->line)); break;
+    case '+': scanner_add_token(scanner, Token_new_plus(scanner->line)); break;
+    case '-': scanner_add_token(scanner, Token_new_minus(scanner->line)); break;
     default: break;
   }
 }
