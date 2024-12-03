@@ -56,17 +56,27 @@ char *token_type_to_string(TokenType type) {
   }
 }
 
-Token *Token_new(TokenType type, char *lexeme, char *literal, int line) {
-  Token *token = (Token*)malloc(sizeof(Token));
+Token *Token_new(TokenType type, const char *lexeme, const char *literal, int line) {
+  Token *token = (Token*)scanner_malloc(sizeof(Token));
   token->type = type;
   token->line = line;
-  token->lexeme = lexeme;
-  token->literal = literal;
+
+  token->lexeme = lexeme ? strdup(lexeme) : NULL;
+  token->literal = literal ? strdup(literal) : NULL;
+
   return token;
 }
 
 Token *Token_new_eof(int line) {
   return Token_new(EOFILE, "", NULL, line);
+}
+
+Token *Token_new_lparen(int line) {
+  return Token_new(LEFT_PAREN, "(", NULL, line);
+}
+
+Token *Token_new_rparen(int line) {
+  return Token_new(RIGHT_PAREN, ")", NULL, line);
 }
 
 void scanner_init(Scanner *scanner, const char *source) {
@@ -89,7 +99,7 @@ void *scanner_realloc(void *ptr, size_t size) {
     void* new_ptr = realloc(ptr, size);
     if (new_ptr == NULL) {
         fprintf(stderr, "[ERROR] Unable to reallocate memory to %zu bytes.\n", size);
-        free(ptr); // Free the old memory to prevent a leak
+        free(ptr); 
         exit(EXIT_FAILURE);
     }
     return new_ptr;
@@ -108,36 +118,61 @@ void scanner_tokens_init(Scanner *scanner, size_t capacity) {
 }
 
 void scanner_free(Scanner *scanner) {
-  // TODO: Free allocated tokens, e.g. lexeme etc
-  free(scanner->tokens);
-  scanner->tokens = NULL;
-  scanner->tokens_capacity = 0;
-  scanner->tokens_size = 0;
+    for (size_t i = 0; i < scanner->tokens_size; i++) {
+        Token *token = &scanner->tokens[i];
+
+        // Free dynamically allocated fields within the token
+        if (token->lexeme) {
+            free((char *)token->lexeme);
+            token->lexeme = NULL;
+        }
+        if (token->literal) {
+            free((char *)token->literal);
+            token->literal = NULL;
+        }
+    }
+
+    // Free the tokens array itself
+    free(scanner->tokens);
+    scanner->tokens = NULL;
+
+    scanner->tokens_capacity = 0;
+    scanner->tokens_size = 0;
 }
 
 int is_at_end(Scanner *scanner) {
   return scanner->current >= strlen(scanner->source);
 }
 
-void scanner_scan_token(Scanner *scanner) {
-  scanner->current++;
+char scanner_advance(Scanner *scanner) {
+  return scanner->source[scanner->current++];
 }
 
 void scanner_add_token(Scanner *scanner, Token *token) {
-    if (scanner->tokens_size >= scanner->tokens_capacity) {
-        if (scanner->tokens_capacity == 0) {
-            scanner->tokens_capacity = 8; // Start with a small non-zero capacity
-        } else {
-            scanner->tokens_capacity *= 2; // Double the capacity
-        }
+  if (scanner->tokens_size >= scanner->tokens_capacity) {
+      if (scanner->tokens_capacity == 0) {
+          scanner->tokens_capacity = 8;
+      } else {
+          scanner->tokens_capacity *= 2;
+      }
 
-        scanner->tokens = scanner_realloc(scanner->tokens, scanner->tokens_capacity * sizeof(Token));
-    }
+      scanner->tokens = scanner_realloc(scanner->tokens, scanner->tokens_capacity * sizeof(Token));
+  }
 
-    // Safely add the token
-    scanner->tokens[scanner->tokens_size++] = *token;
+  scanner->tokens[scanner->tokens_size++] = *token;
+
+  free(token);
 }
 
+void scanner_scan_token(Scanner *scanner) {
+  // TODO: Implement the scanner
+  char c = scanner_advance(scanner);
+  switch (c) {
+    case '(': scanner_add_token(scanner, Token_new_lparen(scanner->line)); break;
+    case ')': scanner_add_token(scanner, Token_new_rparen(scanner->line)); break;
+    default: break;
+  }
+}
 
 void scanner_scan_tokens(Scanner *scanner) {
   while (!is_at_end(scanner)) {

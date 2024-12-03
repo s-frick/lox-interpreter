@@ -20,44 +20,11 @@ typedef enum TokenType {
 
 char *token_type_to_string(TokenType type);
 
-typedef struct Str Str;
-
-typedef struct Num Num;
-
-typedef struct Identifier Identifier;
-
-typedef struct Str {
-  char tag; 
-  char *lexeme;
-  char *literal;
-} Str;
-
-typedef struct Num {
-  char tag;
-  char *lexeme;
-  int value;
-} Num;
-
-typedef struct Identifier {
-  char tag;
-  char *lexeme;
-} Identifier;
-
-typedef struct Eof {
-  char tag;
-  char *lexeme;
-} Eof;
-
 typedef struct Token {
   TokenType type;
-  union {
-    struct Str str_variant;
-    struct Num num_variant;
-    struct Identifier id_variant;
-  } value;
 
-  char *lexeme;
-  char *literal;
+  const char *lexeme;
+  const char *literal;
   int line;
 
 } Token;
@@ -72,6 +39,7 @@ typedef struct Scanner {
   size_t tokens_capacity;
 } Scanner;
 
+Token *Token_new_eof(int line);
 
 void scanner_init(Scanner *scanner, const char *source);
 

@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
 
       scanner_init(scanner, file_contents);
 
-      scanner_free(scanner);
       scanner_scan_tokens(scanner);
 
       for (size_t i = 0; i < scanner->tokens_size; i++) {
@@ -39,10 +38,24 @@ int main(int argc, char *argv[]) {
         printf("%s %s %s\n", token_type_to_string(token->type), lexeme, literal);
       }
 
-      exit(1);
+      scanner_free(scanner);
+      free(scanner);
+    } else {
+      Token *tok = Token_new_eof(1);
+      const char *lexeme = (tok->lexeme) ? tok->lexeme : "null";
+      const char *literal = (tok->literal) ? tok->literal : "null";
+      printf("%s %s %s\n", token_type_to_string(tok->type), lexeme, literal);
+        if (tok->lexeme) {
+            free((char *)tok->lexeme);
+            tok->lexeme = NULL;
+        }
+        if (tok->literal) {
+            free((char *)tok->literal);
+            tok->literal = NULL;
+        }
+      free(tok);
+         
     }
-    printf("EOF  null\n"); // Placeholder, remove this line when implementing
-                           // the scanner
 
     free(file_contents);
   } else {
