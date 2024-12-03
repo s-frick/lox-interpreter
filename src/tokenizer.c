@@ -79,6 +79,15 @@ Token *Token_new_rparen(int line) {
   return Token_new(RIGHT_PAREN, ")", NULL, line);
 }
 
+Token *Token_new_lbrace(int line) {
+  return Token_new(LEFT_BRACE, "{", NULL, line);
+}
+
+Token *Token_new_rbrace(int line) {
+  return Token_new(RIGHT_BRACE, "}", NULL, line);
+}
+
+
 void scanner_init(Scanner *scanner, const char *source) {
   scanner->source = source;
   scanner->start = scanner->current = 0;
@@ -170,6 +179,8 @@ void scanner_scan_token(Scanner *scanner) {
   switch (c) {
     case '(': scanner_add_token(scanner, Token_new_lparen(scanner->line)); break;
     case ')': scanner_add_token(scanner, Token_new_rparen(scanner->line)); break;
+    case '{': scanner_add_token(scanner, Token_new_lbrace(scanner->line)); break;
+    case '}': scanner_add_token(scanner, Token_new_rbrace(scanner->line)); break;
     default: break;
   }
 }
