@@ -107,6 +107,11 @@ Token *Token_new_minus(int line) {
   return Token_new(MINUS, "-", NULL, line);
 }
 
+Token *Token_new_semicolon(int line) {
+  return Token_new(SEMICOLON, ";", NULL, line);
+}
+
+
 void scanner_init(Scanner *scanner, const char *source) {
   scanner->source = source;
   scanner->start = scanner->current = 0;
@@ -205,6 +210,7 @@ void scanner_scan_token(Scanner *scanner) {
     case ',': scanner_add_token(scanner, Token_new_comma(scanner->line)); break;
     case '+': scanner_add_token(scanner, Token_new_plus(scanner->line)); break;
     case '-': scanner_add_token(scanner, Token_new_minus(scanner->line)); break;
+    case ';': scanner_add_token(scanner, Token_new_semicolon(scanner->line)); break;
     default: break;
   }
 }
