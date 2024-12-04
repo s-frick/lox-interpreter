@@ -174,7 +174,7 @@ void scanner_free(Scanner *scanner) {
 }
 
 int is_at_end(Scanner *scanner) {
-  return scanner->current >= strlen(scanner->source);
+  return scanner->current >= strlen(scanner->source)-1;
 }
 
 char scanner_advance(Scanner *scanner) {
@@ -211,7 +211,11 @@ void scanner_scan_token(Scanner *scanner) {
     case '+': scanner_add_token(scanner, Token_new_plus(scanner->line)); break;
     case '-': scanner_add_token(scanner, Token_new_minus(scanner->line)); break;
     case ';': scanner_add_token(scanner, Token_new_semicolon(scanner->line)); break;
-    default: break;
+    default: 
+
+      fprintf(stderr, "[line %d] Error: Unexpected character: %c\n", scanner->line, c);
+      // fprintf(stderr, "[ERROR] [line %d] Unexpected character: %c\n", scanner->line, c);
+      break;
   }
 }
 
@@ -220,7 +224,7 @@ void scanner_scan_tokens(Scanner *scanner) {
     scanner->start = scanner->current;
     scanner_scan_token(scanner);
   }
-  scanner_add_token(scanner, Token_new_eof(scanner->line));
+  
 }
 
 
