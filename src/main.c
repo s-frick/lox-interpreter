@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
         const char *lexeme = (token->lexeme) ? token->lexeme : "null";
         const char *literal = (token->literal) ? token->literal : "null";
 
-        printf("%s %s %s\n", token_type_to_string(token->type), lexeme,
-               literal);
+        fprintf(stdout, "%s %s %s\n", token_type_to_string(token->type), lexeme,
+                literal);
       }
 
       if (scanner->error != 0) {

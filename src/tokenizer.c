@@ -262,6 +262,9 @@ void scanner_scan_token(Scanner *scanner) {
   case ';':
     scanner_add_token(scanner, Token_new_semicolon(scanner->line));
     break;
+  case EOF:
+    scanner_add_token(scanner, Token_new_eof(scanner->line));
+    break;
   default:
 
     fprintf(stderr, "[line %d] Error: Unexpected character: %c\n",
@@ -278,4 +281,5 @@ void scanner_scan_tokens(Scanner *scanner) {
     scanner->start = scanner->current;
     scanner_scan_token(scanner);
   }
+  scanner_add_token(scanner, Token_new_eof(scanner->line));
 }
