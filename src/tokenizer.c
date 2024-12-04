@@ -208,7 +208,9 @@ int is_at_end(Scanner *scanner) {
 }
 
 char scanner_advance(Scanner *scanner) {
-  return scanner->source[scanner->current++];
+  char curr = scanner->source[scanner->current];
+  scanner->current++;
+  return curr;
 }
 
 void scanner_add_token(Scanner *scanner, Token *token) {
@@ -229,7 +231,6 @@ void scanner_add_token(Scanner *scanner, Token *token) {
 }
 
 void scanner_scan_token(Scanner *scanner) {
-  // TODO: Implement the scanner
   char c = scanner_advance(scanner);
   switch (c) {
   case '(':
@@ -262,12 +263,13 @@ void scanner_scan_token(Scanner *scanner) {
   case ';':
     scanner_add_token(scanner, Token_new_semicolon(scanner->line));
     break;
-  case EOF:
+  case -1:
     scanner_add_token(scanner, Token_new_eof(scanner->line));
     break;
   default:
 
-    fprintf(stderr, "[line %d] Error: Unexpected character: %c\n", scanner->line, c);
+    fprintf(stderr, "[line %d] Error: Unexpected character: %c\n",
+            scanner->line, c);
     scanner->error = 65;
     // fprintf(stderr, "[ERROR] [line %d] Unexpected character: %c\n",
     // scanner->line, c);

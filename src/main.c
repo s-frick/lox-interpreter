@@ -51,7 +51,8 @@ int main(int argc, char *argv[]) {
       Token *tok = Token_new_eof(1);
       const char *lexeme = (tok->lexeme) ? tok->lexeme : "null";
       const char *literal = (tok->literal) ? tok->literal : "null";
-      printf("%s %s %s\n", token_type_to_string(tok->type), lexeme, literal);
+      fprintf(stdout, "%s %s %s\n", token_type_to_string(tok->type), lexeme,
+              literal);
       if (tok->lexeme) {
         free((char *)tok->lexeme);
         tok->lexeme = NULL;
