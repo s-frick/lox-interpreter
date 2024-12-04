@@ -37,6 +37,7 @@ typedef struct Scanner {
   Token *tokens;
   size_t tokens_size;
   size_t tokens_capacity;
+  int error;
 } Scanner;
 
 Token *Token_new_eof(int line);

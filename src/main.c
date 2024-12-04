@@ -1,12 +1,14 @@
+#include "tokenizer.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tokenizer.h"
 
 char *read_file_contents(const char *filename);
 
 int main(int argc, char *argv[]) {
+  int exit_code = 0;
+
   // Disable output buffering
   setbuf(stdout, NULL);
   setbuf(stderr, NULL);
@@ -22,7 +24,7 @@ int main(int argc, char *argv[]) {
     char *file_contents = read_file_contents(argv[2]);
 
     if (strlen(file_contents) > 0) {
-      Scanner *scanner = (Scanner*)scanner_malloc(sizeof(Scanner));
+      Scanner *scanner = (Scanner *)scanner_malloc(sizeof(Scanner));
 
       scanner_init(scanner, file_contents);
 
@@ -35,7 +37,12 @@ int main(int argc, char *argv[]) {
         const char *lexeme = (token->lexeme) ? token->lexeme : "null";
         const char *literal = (token->literal) ? token->literal : "null";
 
-        printf("%s %s %s\n", token_type_to_string(token->type), lexeme, literal);
+        printf("%s %s %s\n", token_type_to_string(token->type), lexeme,
+               literal);
+      }
+
+      if (scanner->error != 0) {
+        exit_code = scanner->error;
       }
 
       scanner_free(scanner);
@@ -45,25 +52,25 @@ int main(int argc, char *argv[]) {
       const char *lexeme = (tok->lexeme) ? tok->lexeme : "null";
       const char *literal = (tok->literal) ? tok->literal : "null";
       printf("%s %s %s\n", token_type_to_string(tok->type), lexeme, literal);
-        if (tok->lexeme) {
-            free((char *)tok->lexeme);
-            tok->lexeme = NULL;
-        }
-        if (tok->literal) {
-            free((char *)tok->literal);
-            tok->literal = NULL;
-        }
+      if (tok->lexeme) {
+        free((char *)tok->lexeme);
+        tok->lexeme = NULL;
+      }
+      if (tok->literal) {
+        free((char *)tok->literal);
+        tok->literal = NULL;
+      }
       free(tok);
-         
     }
 
     free(file_contents);
+    exit(exit_code);
   } else {
     fprintf(stderr, "Unknown command: %s\n", command);
     return 1;
   }
 
-  return 0;
+  return exit_code;
 }
 
 char *read_file_contents(const char *filename) {
