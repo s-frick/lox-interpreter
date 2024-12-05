@@ -268,7 +268,7 @@ void scanner_scan_token(Scanner *scanner) {
     break;
   default:
 
-    fprintf(stderr, "[line %d] Error: Unexpected character: %c\n",
+    fprintf(stderr, "[line %zu] Error: Unexpected character: %c\n",
             scanner->line, c);
     scanner->error = 65;
     // fprintf(stderr, "[ERROR] [line %d] Unexpected character: %c\n",

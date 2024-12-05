@@ -1,22 +1,50 @@
-#include <stddef.h> 
+#include <stddef.h>
 
 typedef enum TokenType {
-  LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+  LEFT_PAREN,
+  RIGHT_PAREN,
+  LEFT_BRACE,
+  RIGHT_BRACE,
+  COMMA,
+  DOT,
+  MINUS,
+  PLUS,
+  SEMICOLON,
+  SLASH,
+  STAR,
 
-  BANG, BANG_EQUAL,
-  EQUAL, EQUAL_EQUAL,
-  GREATER, GREATER_EQUAL,
-  LESS, LESS_EQUAL,
+  BANG,
+  BANG_EQUAL,
+  EQUAL,
+  EQUAL_EQUAL,
+  GREATER,
+  GREATER_EQUAL,
+  LESS,
+  LESS_EQUAL,
 
-  IDENTIFIER, STRING, NUMBER,
+  IDENTIFIER,
+  STRING,
+  NUMBER,
 
-  AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
-  PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+  AND,
+  CLASS,
+  ELSE,
+  FALSE,
+  FUN,
+  FOR,
+  IF,
+  NIL,
+  OR,
+  PRINT,
+  RETURN,
+  SUPER,
+  THIS,
+  TRUE,
+  VAR,
+  WHILE,
 
   EOFILE
 } TokenType;
-
 
 char *token_type_to_string(TokenType type);
 
@@ -33,7 +61,7 @@ typedef struct Scanner {
   const char *source;
   size_t start;
   size_t current;
-  int line;
+  size_t line;
   Token *tokens;
   size_t tokens_size;
   size_t tokens_capacity;
