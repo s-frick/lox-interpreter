@@ -6,6 +6,18 @@
 
 char *read_file_contents(const char *filename);
 
+void print_token(Token token) {
+  const char *lexeme = (token.lexeme) ? token.lexeme : "null";
+  const char *literal = (token.literal) ? token.literal : "null";
+  printf("%s %s %s\n", token_type_to_string(token.type), lexeme, literal);
+}
+
+void print_tokens(Token *tokens, size_t num) {
+  for (size_t i = 0; i < num; i++) {
+    print_token(tokens[i]);
+  }
+}
+
 int main(int argc, char *argv[]) {
   int exit_code = 0;
 
@@ -25,21 +37,10 @@ int main(int argc, char *argv[]) {
 
     if (strlen(file_contents) > 0) {
       Scanner *scanner = (Scanner *)scanner_malloc(sizeof(Scanner));
-
       scanner_init(scanner, file_contents);
-
       scanner_scan_tokens(scanner);
 
-      for (size_t i = 0; i < scanner->tokens_size; i++) {
-        Token *token = &scanner->tokens[i];
-
-        // Check if `lexeme` is NULL
-        const char *lexeme = (token->lexeme) ? token->lexeme : "null";
-        const char *literal = (token->literal) ? token->literal : "null";
-
-        fprintf(stdout, "%s %s %s\n", token_type_to_string(token->type), lexeme,
-                literal);
-      }
+      print_tokens(scanner->tokens, scanner->tokens_size);
 
       if (scanner->error != 0) {
         exit_code = scanner->error;
@@ -48,24 +49,11 @@ int main(int argc, char *argv[]) {
       scanner_free(scanner);
       free(scanner);
     } else {
-      Token *tok = Token_new_eof(1);
-      const char *lexeme = (tok->lexeme) ? tok->lexeme : "null";
-      const char *literal = (tok->literal) ? tok->literal : "null";
-      fprintf(stdout, "%s %s %s\n", token_type_to_string(tok->type), lexeme,
-              literal);
-      if (tok->lexeme) {
-        free((char *)tok->lexeme);
-        tok->lexeme = NULL;
-      }
-      if (tok->literal) {
-        free((char *)tok->literal);
-        tok->literal = NULL;
-      }
-      free(tok);
+      fprintf(stdout, "EOF  null\n");
     }
 
     free(file_contents);
-    exit(exit_code);
+    return exit_code;
   } else {
     fprintf(stderr, "Unknown command: %s\n", command);
     return 1;
